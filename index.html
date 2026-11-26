@@ -47,7 +47,9 @@ main{max-width:1280px;margin:0 auto;padding:20px 16px 110px}
 .g3{grid-template-columns:1fr}
 .kpi .l{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:var(--mut)}
 .kpi .v{margin-top:8px;display:flex;align-items:baseline;gap:6px;font-variant-numeric:tabular-nums}
-.kpi .v b{font-size:22px;font-weight:600;line-height:1.1}
+.kpi{min-width:0}
+.kpi .l span{min-width:0;overflow-wrap:anywhere}
+.kpi .v b{font-size:22px;font-weight:600;line-height:1.1;overflow-wrap:anywhere;min-width:0}
 .kpi .v i{font-style:normal;font-size:12px;color:var(--mut);font-weight:500}
 .kpi .s{margin-top:8px;font-size:12px;color:var(--mut)}
 .chip{display:inline-flex;align-items:center;gap:4px;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:500;white-space:nowrap}
@@ -104,6 +106,11 @@ pre{margin:0;max-height:420px;overflow:auto;white-space:pre-wrap;border:1px soli
 .legend{display:none;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--mut)}
 .legend span{display:flex;align-items:center;gap:4px}
 .legend i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:48px 24px}
+.empty .ic{width:44px;height:44px;border-radius:12px;background:var(--panel2);box-shadow:0 0 0 1px var(--line);display:flex;align-items:center;justify-content:center;color:var(--acc)}
+.empty h3{margin:0;font-size:15px;font-weight:600}
+.empty p{margin:0;font-size:13px;color:var(--mut);max-width:420px}
+.empty .acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:4px}
 .fail{padding:24px;font:13px/1.6 ui-monospace,Menlo,monospace;color:#f87171;white-space:pre-wrap}
 @media(min-width:640px){.top-in,main{padding-left:24px;padding-right:24px}.top .desc{display:block}.kpi .v b{font-size:26px}.legend{display:flex}.row{flex-direction:row}}
 @media(min-width:768px){.side{display:flex}.content{padding-left:240px;transition:padding .2s}.content.col{padding-left:68px}.bottom{display:none}main{padding-bottom:40px}}
@@ -184,6 +191,36 @@ const crearRecetas = () =>
     precio: r.precio,
     ing: r.ing.map(([nombre, cant, precio, un], i) => ({ id: r.plato + i, nombre, cant, precio, un })),
   }));
+
+const PRECIO_CARTA_DEFECTO = 10500;
+const INSUMO_SUGERIDO = [
+  [["ceviche", "pescado", "reineta"], "Pescado Blanco Fresco (Reineta)", 9500, 180],
+  [["salmon"], "Filete de Salmón Fresco", 14000, 200],
+  [["atun"], "Atún Fresco", 15000, 180],
+  [["macha"], "Lenguas de Machas Frescas", 11000, 150],
+  [["lomo", "carne", "vacuno", "bife", "filete"], "Lomo Liso Vacuno", 9800, 220],
+  [["pollo"], "Pechuga de Pollo", 4800, 200],
+  [["empanada", "pino"], "Carne Picada Vacuno (Posta)", 7500, 120],
+  [["pastel", "choclo"], "Pasta de Choclo", 3800, 250],
+  [["cazuela"], "Corte de Vacuno (Osobuco/Tapa Pecho)", 6800, 250],
+];
+function recetaInicial(plato) {
+  const p = sinTildes(plato);
+  const m = INSUMO_SUGERIDO.find(([claves]) => claves.some((c) => p.includes(c)));
+  const [nombre, precio, cant] = m ? [m[1], m[2], m[3]] : ["Insumo Perecible Principal", 6500, 180];
+  return { plato, precio: PRECIO_CARTA_DEFECTO, ing: [{ id: plato + "0", nombre, cant, precio, un: "g" }] };
+}
+function sincronizarRecetas(filas) {
+  const base = crearRecetas(), vistos = new Set(), out = [];
+  for (const f of filas) {
+    const k = sinTildes(f.plato);
+    if (!k || vistos.has(k)) continue;
+    vistos.add(k);
+    const r = base.find((b) => sinTildes(b.plato) === k);
+    out.push(r ? r : recetaInicial(f.plato));
+  }
+  return out;
+}
 
 const fmt = (n) => {
   const v = Math.round(Number.isFinite(n) ? n : 0);
@@ -402,6 +439,12 @@ function leerCSV(texto) {
   const C = { acc: "#8b8cff", ok: "#34d399", warn: "#fbbf24", bad: "#f87171", orange: "#fb923c", mut: "#8b909c", line: "#23262d", dim: "#3a3f4b", txt: "#c9cdd6" };
   const RIESGO_COLOR = { "CRÍTICO": C.bad, ALTO: C.orange, MEDIO: C.warn, BAJO: C.ok };
   const CUAD_COLOR = { Estrella: C.ok, "Caballo de Batalla": C.acc, Rompecabezas: C.warn, Perro: C.bad };
+  const CUAD_GUIA = {
+    Estrella: ["Alta venta y alto margen", "Mantener y destacar en carta"],
+    "Caballo de Batalla": ["Alta venta y bajo margen", "Subir precio o bajar costo"],
+    Rompecabezas: ["Baja venta y alto margen", "Promocionar más en salón"],
+    Perro: ["Baja venta y bajo margen", "Rediseñar o evaluar retirar"],
+  };
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const corto = (n) => (n >= 1e6 ? "$" + fmtN(n / 1e6, 1) + " M" : n >= 1000 ? "$" + fmtN(n / 1000) + " mil" : "$" + fmtN(n));
 
@@ -436,7 +479,7 @@ function leerCSV(texto) {
   const ico = (n, s = 16, cls = "") => `<svg class="${cls}" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none">${ICONS[n] || ""}</svg>`;
 
   const S = {
-    vista: "finanzas", colapsado: false, recetas: crearRecetas(), filas: generarVentasDemo(), origen: "demo", error: "",
+    vista: "ventas", colapsado: false, recetas: [], filas: [], origen: "", error: "",
     periodo: "finde", margen: MARGEN_DEFECTO, restaurante: "Mi Restaurante", sub: "abast", filtro: "todos", q: "", sel: "pesquero", copiado: "",
     focoKey: null, raw: "", tel: {},
   };
@@ -463,6 +506,9 @@ function leerCSV(texto) {
     `<div class="card p4 kpi"><div class="l"><span>${label}</span>${icon ? ico(icon, 15) : ""}</div>
      <div class="v ${tone || ""}"><b>${value}</b>${unit ? `<i>${unit}</i>` : ""}</div>${sub ? `<div class="s">${sub}</div>` : ""}</div>`;
   const ctitle = (t, sub, right) => `<div class="ctitle"><div><h3>${t}</h3>${sub ? `<p>${sub}</p>` : ""}</div>${right || ""}</div>`;
+  const hayVentas = () => S.filas.length > 0;
+  const vacio = (icon, t, sub, acts) => `<div class="card empty"><div class="ic">${ico(icon, 22)}</div><h3>${t}</h3>${sub ? `<p>${sub}</p>` : ""}${acts ? `<div class="acts">${acts}</div>` : ""}</div>`;
+  const vacioSinVentas = () => vacio("db", "Primero carga un reporte POS o activa los datos de prueba", "", `<button class="btn out" data-act="ir" data-v="ventas">${ico("chart", 16)} Ir a Ventas POS</button><button class="btn pri" data-act="demo">${ico("db", 16)} Usar Datos Demo de 90 Días</button>`);
   const colorFC = (p) => (p <= 30 ? C.ok : p <= 35 ? C.warn : C.bad);
   const numInput = (key, value, extra = "") => {
     const v = S.focoKey === key ? S.raw : String(value).replace(".", ",");
@@ -518,7 +564,7 @@ function leerCSV(texto) {
   }
 
   function svgScatter(im) {
-    const W = 800, H = 450, l = 62, r = 24, t = 14, b = 44, pw = W - l - r, ph = H - t - b;
+    const W = 800, H = 476, l = 62, r = 24, t = 14, b = 62, pw = W - l - r, ph = H - t - b;
     const maxX = Math.max(...im.filas.map((f) => f.un), 1) * 1.15, maxY = Math.max(...im.filas.map((f) => f.mu), 1) * 1.2;
     const X = (v) => l + (v / maxX) * pw, Y = (v) => t + ph - (v / maxY) * ph;
     const q = [["Estrella", im.mediaUn, maxX, im.mediaMu, maxY, "end", "top"], ["Rompecabezas", 0, im.mediaUn, im.mediaMu, maxY, "start", "top"], ["Caballo de Batalla", im.mediaUn, maxX, 0, im.mediaMu, "end", "bottom"], ["Perro", 0, im.mediaUn, 0, im.mediaMu, "start", "bottom"]];
@@ -529,39 +575,55 @@ function leerCSV(texto) {
     });
     for (let i = 0; i <= 5; i++) {
       const vx = (maxX / 5) * i, vy = (maxY / 5) * i;
-      s += `<line x1="${X(vx)}" x2="${X(vx)}" y1="${t}" y2="${t + ph}" stroke="${C.line}"/><text x="${X(vx)}" y="${t + ph + 16}" text-anchor="middle" font-size="11" fill="${C.mut}">${fmtN(vx)}</text>`;
+      s += `<line x1="${X(vx)}" x2="${X(vx)}" y1="${t}" y2="${t + ph}" stroke="${C.line}"/><text x="${X(vx)}" y="${t + ph + 20}" text-anchor="middle" font-size="11" fill="${C.mut}">${fmtN(vx)}</text>`;
       s += `<line x1="${l}" x2="${l + pw}" y1="${Y(vy)}" y2="${Y(vy)}" stroke="${C.line}"/><text x="${l - 8}" y="${Y(vy) + 4}" text-anchor="end" font-size="11" fill="${C.mut}">${corto(vy)}</text>`;
     }
     s += `<line x1="${X(im.mediaUn)}" x2="${X(im.mediaUn)}" y1="${t}" y2="${t + ph}" stroke="${C.mut}" stroke-dasharray="4 4"/><line x1="${l}" x2="${l + pw}" y1="${Y(im.mediaMu)}" y2="${Y(im.mediaMu)}" stroke="${C.mut}" stroke-dasharray="4 4"/>`;
-    s += `<text x="${l + pw / 2}" y="${H - 6}" text-anchor="middle" font-size="11" fill="${C.mut}">Unidades vendidas</text>`;
+    s += `<text x="${l + pw / 2}" y="${H - 14}" text-anchor="middle" font-size="11" fill="${C.mut}">Unidades vendidas</text>`;
+    const R = 8, puntos = im.filas.map((f) => ({ x: X(f.un), y: Y(f.mu) }));
+    const CANDS = [[0, -14, "middle"], [0, 22, "middle"], [13, 4, "start"], [-13, 4, "end"], [0, -30, "middle"], [0, 38, "middle"], [13, -12, "start"], [-13, -12, "end"], [13, 20, "start"], [-13, 20, "end"], [0, -46, "middle"], [0, 54, "middle"]];
+    const caja = (cx, cy, w, [dx, dy, an]) => { const x0 = an === "middle" ? cx + dx - w / 2 : an === "start" ? cx + dx : cx + dx - w; return { x0, x1: x0 + w, y0: cy + dy - 10, y1: cy + dy + 3, tx: cx + dx, ty: cy + dy, an }; };
+    const choca = (b) =>
+      b.x0 < l || b.x1 > l + pw || b.y0 < t || b.y1 > t + ph ||
+      placed.some((p) => b.x0 < p.x1 + 3 && b.x1 > p.x0 - 3 && b.y0 < p.y1 + 2 && b.y1 > p.y0 - 2) ||
+      puntos.some((c) => { const nx = Math.max(b.x0, Math.min(c.x, b.x1)), ny = Math.max(b.y0, Math.min(c.y, b.y1)); return Math.hypot(nx - c.x, ny - c.y) < R + 3; });
     im.filas.forEach((f) => {
-      const tip = `${esc(f.plato)}|${f.cuad}|Unidades: ${fmtN(f.un)}|Margen unitario: ${fmt(f.mu)} (${fmtPct(f.mpct)})`;
-      s += `<circle cx="${X(f.un).toFixed(1)}" cy="${Y(f.mu).toFixed(1)}" r="8" fill="${CUAD_COLOR[f.cuad]}" fill-opacity="0.92" stroke="#0a0b0d" stroke-width="2" data-tip="${tip}"/>`;
-      { const w = f.plato.length * 6.2, cx = X(f.un), cy = Y(f.mu); let ty = cy - 14; for (const o of [-14, 22, -30, 38, -46, 54]) { const y0 = cy + o; if (!placed.some((p) => Math.abs(p.x - cx) < (p.w + w) / 2 + 4 && Math.abs(p.y - y0) < 13)) { ty = y0; break; } } placed.push({ x: cx, y: ty, w }); s += `<text x="${cx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle" font-size="11" fill="${C.txt}" style="pointer-events:none">${esc(f.plato)}</text>`; }
+      const tip = `${esc(f.plato)}|${f.cuad}|Unidades: ${fmtN(f.un)}|Margen unitario: ${fmt(f.mu)} (${fmtPct(f.mpct)})|Acción: ${CUAD_GUIA[f.cuad][1]}`;
+      s += `<circle cx="${X(f.un).toFixed(1)}" cy="${Y(f.mu).toFixed(1)}" r="${R}" fill="${CUAD_COLOR[f.cuad]}" fill-opacity="0.92" stroke="#0a0b0d" stroke-width="2" data-tip="${tip}"/>`;
+    });
+    im.filas.forEach((f) => {
+      const w = f.plato.length * 6.2, cx = X(f.un), cy = Y(f.mu);
+      let bx = null;
+      for (const c of CANDS) { const b = caja(cx, cy, w, c); if (!choca(b)) { bx = b; break; } }
+      if (!bx) bx = caja(cx, cy, w, CANDS[0]);
+      placed.push(bx);
+      s += `<text x="${bx.tx.toFixed(1)}" y="${bx.ty.toFixed(1)}" text-anchor="${bx.an}" font-size="11" fill="${C.txt}" style="pointer-events:none">${esc(f.plato)}</text>`;
     });
     return `<svg class="chart" viewBox="0 0 ${W} ${H}">${s}</svg>`;
   }
 
   function vVentas(d) {
-    const { an, sinReceta } = d, maxPart = an.platos.length ? an.platos[0].part : 1;
+    const { an, sinReceta } = d, maxPart = an.platos.length ? an.platos[0].part : 1, hay = hayVentas();
     return `<div class="stack">
     <div class="card p3"><div class="row" style="align-items:stretch">
       <div class="drop" id="drop" data-act="pick">${ico("upload", 18)}<div style="min-width:0"><p style="font-size:13px;font-weight:500">Cargar reporte de ventas (CSV)</p><p class="mut" style="font-size:12px">Arrastra el archivo o haz clic. Columnas: Fecha, Plato, Cantidad. Fudo, Toteat, Bsale, Loyverse.</p></div>
       <input type="file" id="file" accept=".csv,text/csv,text/plain" style="display:none"></div>
       <button class="btn pri" data-act="demo" style="min-width:290px">${ico("db", 17)} Usar Datos Demo de 90 Días</button></div>
-      <div class="mut" style="margin-top:12px;font-size:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="dot"></span><span>${S.origen === "demo" ? "Datos demo cargados" : "Archivo cargado: " + esc(S.origen)}</span><span>· ${fechaCorta(an.desde)} al ${fechaCorta(an.hasta)}</span></div>
+      ${hay ? `<div class="mut" style="margin-top:12px;font-size:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="dot"></span><span>${S.origen === "demo" ? "Datos demo cargados" : "Archivo cargado: " + esc(S.origen)}</span><span>· ${fechaCorta(an.desde)} al ${fechaCorta(an.hasta)}</span></div>` : ""}
       ${S.error ? `<div class="alert bad">${ico("alert", 13)} ${esc(S.error)}</div>` : ""}
       ${sinReceta.length ? `<div class="alert warn">${ico("alert", 13)} <span>${sinReceta.length} ${sinReceta.length === 1 ? "plato sin receta" : "platos sin receta"}: ${esc(sinReceta.join(", "))}. Créalas en Recetas y Costos para incluirlas en Finanzas.</span></div>` : ""}
     </div>
+    ${!hay ? vacio("chart", "Aún no hay ventas cargadas", "Sube tu reporte POS o carga la demo para generar los indicadores y gráficos.") + "</div>" : `
     <div class="grid g4">${kpi("Total Platos Vendidos", fmtN(an.totalUn), "", "", "unidades en el período", "rec")}${kpi("Platos en Carta", fmtN(an.nPlatos), "", "", "con ventas registradas", "chef")}${kpi("Días Analizados", fmtN(an.dias), "", "", "promedio " + fmtN(an.totalUn / Math.max(an.dias, 1)) + " platos al día", "cal")}${kpi("% Peak Fin de Semana", fmtPct(an.pctPeak), "", "ok", "viernes a domingo", "trend")}</div>
     <div class="grid trend"><div class="card">${ctitle("Tendencia diaria", "Barras violetas: viernes a domingo. Línea verde: promedio móvil de 7 días.")}<div style="padding:0 8px 12px">${svgTendencia(an.serie)}</div></div>
     <div class="card">${ctitle("Estacionalidad semanal", "Promedio de platos por día de la semana")}<div style="padding:0 8px 12px">${svgSemanal(an.semanal)}</div></div></div>
     <div class="card">${ctitle("Resumen por plato", "Ordenado por unidades vendidas")}<div class="scroll"><table style="min-width:480px"><thead><tr><th>Plato</th><th class="r">Unidades</th><th class="r">Por día</th><th style="width:38%;padding-left:16px">Participación</th></tr></thead><tbody>
     ${an.platos.map((p) => `<tr><td style="font-weight:500">${esc(p.plato)}</td><td class="r tab">${fmtN(p.un)}</td><td class="r tab mut">${fmtN(p.un / Math.max(an.dias, 1), 1)}</td><td style="padding-left:16px"><div style="display:flex;gap:8px;align-items:center"><div class="bar"><i style="width:${(p.part / maxPart) * 100}%"></i></div><span class="tab mut" style="width:48px;text-align:right;font-size:12px">${fmtPct(p.part)}</span></div></td></tr>`).join("")}
-    </tbody></table></div></div></div>`;
+    </tbody></table></div></div></div>`}`;
   }
 
   function vRecetas(d) {
+    if (!hayVentas()) return vacioSinVentas();
     const qn = sinTildes(S.q);
     const vis = S.recetas.filter((r) => (S.filtro === "todos" || r.plato === S.filtro) && (!qn || sinTildes(r.plato).includes(qn) || r.ing.some((i) => sinTildes(i.nombre).includes(qn))));
     let v = 0, c = 0;
@@ -587,7 +649,7 @@ function leerCSV(texto) {
       <div class="row" style="align-items:center"><div class="search">${ico("search", 15)}<input type="text" data-f="q" data-q="1" placeholder="Buscar plato o insumo" value="${esc(S.q)}"></div>
       <select data-sel="filtro" style="min-width:230px"><option value="todos">Todos los platos</option>${S.recetas.map((r) => `<option value="${esc(r.plato)}" ${S.filtro === r.plato ? "selected" : ""}>${esc(r.plato)}</option>`).join("")}</select>
       <button class="btn out sm" data-act="resetRec">${ico("reset", 13)} Restablecer</button></div>
-      <div class="mut" style="font-size:12px">Food Cost ponderado por ventas: <b class="tab" style="font-size:14px;color:${colorFC(pond)}">${fmtPct(pond)}</b> · Edita cantidades y precios, el costo se recalcula al instante.</div>
+      <div class="mut" style="font-size:12px">${hayVentas() ? `Food Cost ponderado por ventas: <b class="tab" style="font-size:14px;color:${colorFC(pond)}">${fmtPct(pond)}</b> · ` : ""}Edita cantidades y precios, el costo se recalcula al instante.</div>
       ${d.sinReceta.length ? `<div class="card p3" style="border-color:rgba(251,191,36,.4)"><div class="alert warn" style="margin:0 0 8px">${ico("alert", 13)} Platos del POS sin receta</div><div style="display:flex;gap:8px;flex-wrap:wrap">${d.sinReceta.map((n) => `<button class="btn out sm" data-act="crear" data-n="${esc(n)}">${ico("plus", 12)} Crear receta de ${esc(n)}</button>`).join("")}</div></div>` : ""}
       ${vis.length ? cards : `<div class="card p4 mut" style="text-align:center;padding:32px">Ningún plato coincide con la búsqueda.</div>`}</div>`;
   }
@@ -601,7 +663,7 @@ function leerCSV(texto) {
     <div class="card">${ctitle("Inversión por insumo", "Orden total " + fmt(ab.costo) + " CLP · " + ab.dias + " días de demanda con " + Math.round(S.margen * 100) + "% de margen", `<div class="legend">${Object.entries(RIESGO_COLOR).map(([k, c]) => `<span><i style="background:${c}"></i>${k.charAt(0) + k.slice(1).toLowerCase()}</span>`).join("")}</div>`)}<div style="padding:0 8px 12px">${svgInversion(ab.lista)}</div></div>
     <div class="grid cols2"><div><h3 class="sec">${ico("pause", 15, "bad")} Frenar compra</h3><div class="stack">${ab.frenar.length ? ab.frenar.map((f) => `<div class="card side-card"><div style="display:flex;justify-content:space-between;gap:12px"><div><h4>${esc(f.insumo)}</h4><p>Hay ${fmtN(f.stock, 1)} kg en ${esc(f.lugar)} y el período necesita ${fmtN(f.necesita, 1)} kg. No compres más para no inmovilizar capital.</p></div><div class="r"><div class="mut" style="font-size:11px;text-transform:uppercase">Evitas</div><div class="ok tab" style="font-weight:600">${fmt(f.ahorro)}</div></div></div></div>`).join("") : `<div class="card p4 mut">Sin sobrestock para este período: no hay compras que frenar.</div>`}</div></div>
     <div><h3 class="sec">${ico("mega", 15, "warn")} Promoción preventiva</h3><div class="stack">${ab.promos.length ? ab.promos.map((p) => `<div class="card side-card w"><div style="display:flex;justify-content:space-between;gap:12px"><h4>${esc(p.plato)}</h4>${chip(C.warn, esc(p.detalle))}</div><p>${esc(p.estrategia)}</p></div>`).join("") : `<div class="card p4 mut">No hay insumos críticos que promocionar.</div>`}</div></div></div>
-    <div class="mut alert" style="font-size:12px">${ico("info", 13)} Simulación referencial basada en datos demo. Carga tu reporte POS para proyectar tu local.</div></div>`;
+    <div class="mut alert" style="font-size:12px">${ico("info", 13)} ${S.origen === "demo" ? "Simulación referencial basada en datos demo. Carga tu reporte POS para proyectar tu local." : "Proyección basada en tu reporte POS. Stock de bodega y promociones son de ejemplo."}</div></div>`;
   }
   function margenEtiqueta() { const m = S.margen; return m < 0.1 ? ["Riesgo alto de quiebre de stock", C.bad] : m <= 0.2 ? ["Nivel equilibrado", C.ok] : ["Sobrecompra: más merma", C.warn]; }
   function vAbast(d) {
@@ -616,12 +678,14 @@ function leerCSV(texto) {
   function vMenu(d) {
     const im = d.im;
     return `<div class="stack"><div class="grid g4">${kpi("Facturación Total", fmt(im.ventasTot), "CLP", "", "ventas del período a precio de carta", "rec")}${kpi("Margen Acumulado", fmt(im.margenTot), "CLP", "ok", "ventas menos costo de insumos", "wallet")}${kpi("Margen Promedio %", fmtPct(im.mpct), "", "", "food cost " + fmtPct(100 - im.mpct), "pct")}${kpi("Plato Estrella", im.estrella ? esc(im.estrella.plato) : "-", "", "ok", im.estrella ? fmt(im.estrella.margenTot) + " de margen total" : "", "star")}</div>
-    <div class="card">${ctitle("Matriz de Ingeniería de Menú", "Horizontal: unidades vendidas. Vertical: margen unitario en $ CLP. Las líneas marcan el promedio del menú.", `<div class="legend" style="justify-content:flex-end">${Object.entries(CUAD_COLOR).map(([k, c]) => `<span><i style="background:${c};border-radius:50%"></i>${k}</span>`).join("")}</div>`)}<div style="padding:0 8px 12px">${svgScatter(im)}</div></div>
+    <div class="card">${ctitle("Matriz de Ingeniería de Menú", "Horizontal: unidades vendidas. Vertical: margen unitario en $ CLP. Las líneas marcan el promedio del menú.", `<div class="legend" style="justify-content:flex-end">${Object.entries(CUAD_COLOR).map(([k, c]) => `<span><i style="background:${c};border-radius:50%"></i>${k}</span>`).join("")}</div>`)}<div style="padding:0 8px 4px">${svgScatter(im)}</div>
+    <div class="grid g4" style="padding:0 16px 16px">${Object.entries(CUAD_GUIA).map(([k, [que, hacer]]) => `<div style="border:1px solid var(--line);border-left:3px solid ${CUAD_COLOR[k]};background:var(--bg);border-radius:8px;padding:10px 12px"><div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:${CUAD_COLOR[k]}"><i style="width:8px;height:8px;border-radius:50%;background:${CUAD_COLOR[k]};display:inline-block"></i>${k}</div><div class="mut" style="font-size:11px;margin-top:4px">${que}</div><div style="font-size:12px;font-weight:500;margin-top:2px">${hacer}</div></div>`).join("")}</div></div>
     <div class="card">${ctitle("Rentabilidad por plato", "Ordenado por margen total. Valores en $ CLP.")}<div class="scroll"><table style="min-width:760px"><thead><tr><th>Plato</th><th>Cuadrante</th><th class="r">Unidades</th><th class="r">Ventas Totales</th><th class="r">Costo Insumos</th><th class="r">Margen Total</th><th class="r">Margen %</th><th class="r">% Mix</th></tr></thead><tbody>
     ${im.filas.map((f) => `<tr><td style="font-weight:500">${esc(f.plato)}</td><td>${chip(CUAD_COLOR[f.cuad], f.cuad)}</td><td class="r tab">${fmtN(f.un)}</td><td class="r tab">${fmt(f.ventas)}</td><td class="r tab mut">${fmt(f.costoTot)}</td><td class="r tab ok" style="font-weight:500">${fmt(f.margenTot)}</td><td class="r tab">${fmtPct(f.mpct)}</td><td class="r tab mut">${fmtPct(f.mix)}</td></tr>`).join("")}
     </tbody></table></div></div></div>`;
   }
   function vFinanzas(d) {
+    if (!hayVentas()) return vacioSinVentas();
     return `<div class="stack"><div class="tabs"><button data-act="sub" data-v="abast" class="${S.sub === "abast" ? "on" : ""}">Abastecimiento y Fugas</button><button data-act="sub" data-v="menu" class="${S.sub === "menu" ? "on" : ""}">Ingeniería de Menú</button></div>
     ${d.im.filas.length === 0 ? `<div class="card p4 mut" style="text-align:center;padding:32px">Carga ventas y recetas para ver las finanzas.</div>` : S.sub === "abast" ? vAbast(d) : vMenu(d)}</div>`;
   }
@@ -633,6 +697,7 @@ function leerCSV(texto) {
     return { grupos, g, msg: g ? mensajeOrden(g, g.items, S.restaurante || "Mi Restaurante", entrega) : "" };
   }
   function vProv(d) {
+    if (!hayVentas()) return vacioSinVentas();
     const { grupos, g, msg } = msgActual(d);
     return `<div class="stack"><div class="card p4" style="display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center">
       <div><div class="mut" style="font-size:11px;text-transform:uppercase;letter-spacing:.04em">Total de la orden de compra</div><div class="tab" style="font-size:24px;font-weight:600;margin-top:4px">${fmt(d.ab.costo)} <span class="mut" style="font-size:12px;font-weight:500">CLP</span></div><div class="mut" style="font-size:12px;margin-top:4px">${S.periodo === "finde" ? "Solo Fin de Semana" : "Próximos 7 Días"} · margen de seguridad ${Math.round(S.margen * 100)}%</div></div>
@@ -657,7 +722,7 @@ function leerCSV(texto) {
     return `<aside class="side ${S.colapsado ? "col" : ""}"><div class="brand"><div class="logo">E</div><div class="hide-col" style="line-height:1.2"><div style="font-weight:600">EZtock</div><div class="mut" style="font-size:10px">Stock y costos gastronómicos</div></div></div>
       <nav class="nav">${NAV.map((n) => `<button class="${S.vista === n.id ? "on" : ""}" title="${n.label}" data-act="ir" data-v="${n.id}">${ico(n.icon, 17)}<span class="hide-col">${n.label}</span></button>`).join("")}</nav>
       <div class="side-foot"><button data-act="col" title="Contraer o expandir menú">${ico(S.colapsado ? "cr" : "cl", 16)}<span class="hide-col">Contraer</span></button></div></aside>
-      <div class="content ${S.colapsado ? "col" : ""}"><header class="top"><div class="top-in"><div style="min-width:0"><h1>${a.titulo}</h1><div class="desc">${a.desc}</div></div>${chip(C.acc, "Escenario demo")}</div></header>
+      <div class="content ${S.colapsado ? "col" : ""}"><header class="top"><div class="top-in"><div style="min-width:0"><h1>${a.titulo}</h1><div class="desc">${a.desc}</div></div>${S.origen === "demo" ? chip(C.acc, "Escenario demo") : S.origen ? chip(C.ok, "Datos propios") : ""}</div></header>
       <main id="main">${vista(d)}</main></div>
       <nav class="bottom">${NAV.map((n) => `<button class="${S.vista === n.id ? "on" : ""}" data-act="ir" data-v="${n.id}">${ico(n.icon, 20)}${n.corto}</button>`).join("")}</nav><div id="tip"></div>`;
   }
@@ -684,7 +749,7 @@ function leerCSV(texto) {
     const rd = new FileReader();
     rd.onload = () => safe(() => {
       const r = leerCSV(String(rd.result));
-      if (r.error) S.error = r.error; else { S.error = ""; S.filas = r.filas; S.origen = file.name; }
+      if (r.error) S.error = r.error; else { S.error = ""; S.filas = r.filas; S.origen = file.name; S.recetas = sincronizarRecetas(r.filas); S.filtro = "todos"; }
       render();
     });
     rd.readAsText(file, "utf-8");
@@ -696,12 +761,12 @@ function leerCSV(texto) {
     if (a === "pick") { if (ev.target.id !== "file") document.getElementById("file").click(); return; }
     if (a === "ir") { S.vista = v; setHash(v); render(); window.scrollTo(0, 0); }
     else if (a === "col") { S.colapsado = !S.colapsado; render(); }
-    else if (a === "demo") { S.error = ""; S.filas = generarVentasDemo(); S.origen = "demo"; render(); }
+    else if (a === "demo") { S.error = ""; S.filas = generarVentasDemo(); S.origen = "demo"; S.recetas = crearRecetas(); S.filtro = "todos"; render(); }
     else if (a === "sub") { S.sub = v; render(); }
     else if (a === "periodo") { S.periodo = v; render(); }
     else if (a === "prov") { S.sel = v; S.copiado = ""; render(); }
-    else if (a === "resetRec") { S.recetas = crearRecetas(); render(); }
-    else if (a === "crear") { const n = t.dataset.n; S.recetas.push({ plato: n, precio: 10500, ing: [{ id: n + "0", nombre: "Insumo principal", cant: 200, precio: 6500, un: "g" }] }); render(); }
+    else if (a === "resetRec") { S.recetas = S.origen === "demo" ? crearRecetas() : sincronizarRecetas(S.filas); render(); }
+    else if (a === "crear") { const n = t.dataset.n; S.recetas.push(recetaInicial(n)); render(); }
     else if (a === "addIng") { const r = S.recetas[+t.dataset.r]; r.ing.push({ id: r.plato + "-" + Date.now(), nombre: "Nuevo insumo", cant: 100, precio: 5000, un: "g" }); render(); }
     else if (a === "delIng") { S.recetas[+t.dataset.r].ing.splice(+t.dataset.i, 1); render(); }
     else if (a === "copiar") {
