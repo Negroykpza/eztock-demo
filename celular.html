@@ -3,43 +3,47 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0D12">
 <title>EZtock · Vista Móvil</title>
 <style>
   :root{
-    --bg:#07080a; --surface:#0a0b0d; --card:#111317; --line:#23262d;
-    --text:#f4f5f7; --muted:#9aa0ab; --accent:#8b8cff; --green:#34d399;
+    --bg:#0B0D12; --surface:#0B0D12; --card:#13161F; --card2:#1A1E29; --line:#1F2430;
+    --text:#F4F5F7; --muted:#9AA0AB; --acc:#34D399; --acc-h:#10B981; --on-acc:#052E16;
+    --warn:#FBBF24; --bad:#F87171; --alt:#38BDF8;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%;overflow:hidden}
+  html,body{min-height:100%;overflow-x:hidden}
   body{
     background:var(--bg); color:var(--text);
     font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     -webkit-font-smoothing:antialiased;
   }
-  .glow{position:fixed;inset:0;pointer-events:none;z-index:0}
+  .glow{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
   .glow::before,.glow::after{content:"";position:absolute;border-radius:50%;filter:blur(90px)}
-  .glow::before{width:620px;height:620px;background:radial-gradient(circle,rgba(139,140,255,.42),transparent 65%)}
-  .glow::after{width:520px;height:520px;background:radial-gradient(circle,rgba(52,211,153,.28),transparent 65%)}
+  .glow::before{width:620px;height:620px;left:calc(var(--cx,70vw) - 380px);top:calc(var(--cy,50vh) - 420px);background:radial-gradient(circle,rgba(52,211,153,.30),transparent 65%)}
+  .glow::after{width:520px;height:520px;left:calc(var(--cx,70vw) - 140px);top:calc(var(--cy,50vh) - 60px);background:radial-gradient(circle,rgba(16,185,129,.20),transparent 65%)}
 
-  .stage{position:relative;z-index:1;height:100%;display:flex;align-items:center;justify-content:center;gap:clamp(40px,7vw,120px);padding:24px}
+  .stage{position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;gap:clamp(40px,7vw,120px);padding:24px}
 
   /* Bloque izquierdo */
-  .info{max-width:380px;display:flex;flex-direction:column;gap:28px}
-  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:22px;letter-spacing:-.02em}
-  .logo-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--green));display:grid;place-items:center;box-shadow:0 6px 24px rgba(139,140,255,.35)}
-  .logo b{color:var(--accent);font-weight:700}
-  .tag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--green);letter-spacing:.06em;text-transform:uppercase}
-  .tag i{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+  .info{max-width:400px;display:flex;flex-direction:column;gap:26px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:22px;letter-spacing:-.02em;color:var(--text);text-decoration:none}
+  .logo-mark{width:34px;height:34px;border-radius:9px;background:var(--acc);color:var(--on-acc);display:grid;place-items:center;font-weight:800;font-size:19px;box-shadow:0 6px 24px rgba(52,211,153,.35)}
+  .logo b{color:var(--acc);font-weight:700}
+  .tag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--acc);letter-spacing:.06em;text-transform:uppercase}
+  .tag i{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc)}
   h1{font-size:clamp(28px,2.6vw,40px);line-height:1.12;letter-spacing:-.03em;font-weight:700}
-  h1 span{display:block;color:var(--muted);font-weight:500;font-size:.62em;letter-spacing:-.01em;margin-top:10px}
-  ul{list-style:none;display:flex;flex-direction:column;gap:12px}
-  li{display:flex;align-items:center;gap:12px;font-size:16px;padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:12px}
-  li svg{flex:none}
-  .btn{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;padding:13px 20px;border-radius:11px;background:var(--accent);color:#0a0b0d;font-weight:650;font-size:15px;text-decoration:none;transition:transform .15s,box-shadow .15s;box-shadow:0 8px 28px rgba(139,140,255,.35)}
-  .btn:hover{transform:translateY(-1px);box-shadow:0 12px 34px rgba(139,140,255,.5)}
-  .btn:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+  h1 span{display:block;color:var(--muted);font-weight:500;font-size:.6em;letter-spacing:-.01em;margin-top:10px}
+  ul.ben{list-style:none;display:flex;flex-direction:column;gap:12px}
+  ul.ben li{display:flex;align-items:center;gap:12px;font-size:15.5px;line-height:1.35;padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:12px}
+  ul.ben li svg{flex:none}
+  .ctas{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:13px 20px;border-radius:11px;background:var(--acc);color:var(--on-acc);font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s,box-shadow .15s,background .15s;box-shadow:0 8px 28px rgba(52,211,153,.30)}
+  .btn:hover{background:var(--acc-h);transform:translateY(-1px);box-shadow:0 12px 34px rgba(16,185,129,.45)}
+  .btn:focus-visible,.link:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+  .link{color:var(--muted);font-size:14px;text-decoration:none;padding:8px 4px}
+  .link:hover{color:var(--text)}
   .foot{font-size:12px;color:var(--muted)}
-  .btn .short{display:none}
 
   /* Teléfono */
   .phone-slot{position:relative;flex:none}
@@ -47,7 +51,7 @@
   .bezel{
     position:absolute;inset:0;border-radius:64px;padding:12px;
     background:linear-gradient(145deg,#3a3d44 0%,#16181c 22%,#0c0d10 50%,#1b1d22 78%,#3d4048 100%);
-    box-shadow:0 0 0 1px #2c2f36,inset 0 0 0 1px rgba(255,255,255,.08),0 40px 120px rgba(0,0,0,.7),0 0 80px rgba(139,140,255,.12);
+    box-shadow:0 0 0 1px #2c2f36,inset 0 0 0 1px rgba(255,255,255,.08),0 40px 120px rgba(0,0,0,.7),0 0 80px rgba(52,211,153,.14);
   }
   .bezel::before{content:"";position:absolute;inset:4px;border-radius:60px;border:1px solid rgba(255,255,255,.05);pointer-events:none}
   .btn-side{position:absolute;background:linear-gradient(90deg,#2a2c32,#3c3f46);border-radius:2px}
@@ -56,28 +60,89 @@
   .b3{left:-3px;top:272px;width:3px;height:56px}
   .b4{right:-3px;top:230px;width:3px;height:88px;background:linear-gradient(270deg,#2a2c32,#3c3f46)}
   .screen{position:relative;width:390px;height:844px;border-radius:52px;overflow:hidden;background:var(--surface)}
-  .status{position:absolute;top:0;left:0;right:0;height:50px;display:flex;align-items:center;justify-content:space-between;padding:4px 34px 0 42px;font-size:15px;font-weight:600;z-index:3;pointer-events:none;background:linear-gradient(var(--surface) 70%,rgba(10,11,13,0))}
+  .status{position:absolute;top:0;left:0;right:0;height:50px;display:flex;align-items:center;justify-content:space-between;padding:4px 34px 0 42px;font-size:15px;font-weight:600;z-index:3;pointer-events:none;background:linear-gradient(var(--surface) 70%,rgba(11,13,18,0))}
   .status .right{display:flex;align-items:center;gap:6px}
   .island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:122px;height:35px;border-radius:20px;background:#000;z-index:4;pointer-events:none}
-  .island::after{content:"";position:absolute;right:14px;top:12px;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#2b3550,#0a0c12 70%)}
-  iframe{position:absolute;top:50px;left:0;width:100%;height:calc(100% - 50px - 30px);border:0;display:block;background:var(--surface)}
-  .homebar-zone{position:absolute;left:0;right:0;bottom:0;height:30px;background:var(--surface);z-index:3;pointer-events:none}
-  .homebar{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:rgba(255,255,255,.85);z-index:4;pointer-events:none}
-  .loader{position:absolute;inset:50px 0 30px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--muted);font-size:13px;z-index:1}
-  .spin{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--accent);animation:sp 0.9s linear infinite}
-  @keyframes sp{to{transform:rotate(360deg)}}
+  .island::after{content:"";position:absolute;right:14px;top:12px;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#1f3b33,#0a0c12 70%)}
+  .homebar{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:rgba(255,255,255,.85);z-index:5;pointer-events:none}
 
-  /* Pantallas angostas: bloque compacto arriba, sin viñetas */
+  /* App interna */
+  .app{position:absolute;top:50px;left:0;right:0;bottom:0;display:flex;flex-direction:column;font-size:13px}
+  .app-scroll{flex:1;overflow-y:auto;padding:6px 16px 16px;scrollbar-width:none}
+  .app-scroll::-webkit-scrollbar{display:none}
+  .ah{display:flex;align-items:center;justify-content:space-between;padding:6px 0 14px}
+  .ah .who{display:flex;align-items:center;gap:10px}
+  .ah .lm{width:34px;height:34px;border-radius:9px;background:var(--acc);color:var(--on-acc);display:grid;place-items:center;font-weight:800;font-size:18px}
+  .ah small{display:block;color:var(--muted);font-size:11.5px}
+  .ah strong{font-size:15px}
+  .bell{position:relative;width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center}
+  .bell::after{content:"";position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:var(--bad);box-shadow:0 0 0 2px var(--card)}
+  .sec-t{display:flex;justify-content:space-between;align-items:baseline;margin:16px 0 8px;font-size:13px;font-weight:650}
+  .sec-t span{color:var(--muted);font-weight:500;font-size:11.5px}
+  .c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .hero{background:linear-gradient(150deg,rgba(52,211,153,.20),rgba(52,211,153,.04) 55%),var(--card);border-color:rgba(52,211,153,.35)}
+  .hero .l{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+  .hero .v{font-size:28px;font-weight:750;letter-spacing:-.02em;margin-top:6px;font-variant-numeric:tabular-nums}
+  .hero .d{display:flex;gap:8px;align-items:center;margin-top:4px;color:var(--muted);font-size:12px}
+  .up{color:var(--acc);font-weight:650}.dn{color:var(--bad);font-weight:650}
+  .spark{display:flex;align-items:flex-end;gap:5px;height:54px;margin-top:12px}
+  .spark i{flex:1;border-radius:3px 3px 1px 1px;background:#2A3040}
+  .spark i.pk{background:var(--acc)}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .k .l{color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;display:flex;justify-content:space-between;align-items:center}
+  .k .v{font-size:19px;font-weight:700;margin-top:6px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .k .s{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .meter{height:5px;border-radius:99px;background:#2A3040;margin-top:8px;overflow:hidden}
+  .meter i{display:block;height:100%;border-radius:99px;background:var(--acc)}
+  .row{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--line)}
+  .row:first-child{border-top:0;padding-top:2px}
+  .row:last-child{padding-bottom:2px}
+  .ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:none}
+  .ic.bad{background:rgba(248,113,113,.14);color:var(--bad)}
+  .ic.warn{background:rgba(251,191,36,.14);color:var(--warn)}
+  .ic.ok{background:rgba(52,211,153,.14);color:var(--acc)}
+  .row .t{flex:1;min-width:0}
+  .row .t b{display:block;font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .t small{color:var(--muted);font-size:11.5px}
+  .row .r{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;font-size:12.5px}
+  .row .r small{display:block;color:var(--muted);font-weight:500;font-size:11px}
+  .chip{display:inline-block;font-size:10.5px;font-weight:650;padding:2px 7px;border-radius:99px;white-space:nowrap}
+  .chip.ok{background:rgba(52,211,153,.14);color:var(--acc)}
+  .chip.warn{background:rgba(251,191,36,.14);color:var(--warn)}
+  .chip.bad{background:rgba(248,113,113,.14);color:var(--bad)}
+  .chip.alt{background:rgba(56,189,248,.14);color:var(--alt)}
+  .oc{border-color:rgba(37,211,102,.35)}
+  .oc .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .oc .top b{font-size:14px}
+  .oc .top small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+  .oc .lines{margin:10px 0;padding:10px 0;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);display:flex;flex-direction:column;gap:5px;font-size:12px;color:#C9CDD6}
+  .oc .lines div{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+  .oc .tot{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:15px}
+  .wa{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:12px;padding:11px;border-radius:10px;background:#25D366;color:#06210F;font-weight:700;font-size:13.5px;border:0;cursor:pointer;text-decoration:none}
+  .live{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;padding:12px;border-radius:11px;background:var(--acc);color:var(--on-acc);font-weight:700;font-size:13.5px;text-decoration:none}
+  .live:hover{background:var(--acc-h)}
+  .seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+  .seg span{flex:1;text-align:center;padding:7px 0;border-radius:7px;color:var(--muted);font-size:12px;font-weight:600}
+  .seg span.on{background:var(--card2);color:var(--text);box-shadow:0 0 0 1px var(--line)}
+  .view{display:none}.view.on{display:block;animation:fi .25s ease}
+  @keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .tabbar{flex:none;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);background:rgba(14,17,24,.97);padding:8px 6px 30px}
+  .tabbar button{background:none;border:0;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px;font:600 10.5px system-ui,-apple-system,sans-serif;cursor:pointer;padding:4px 0;border-radius:10px}
+  .tabbar button.on{color:var(--acc)}
+  .tabbar button.on svg{filter:drop-shadow(0 0 6px rgba(52,211,153,.5))}
+  .tabbar button:focus-visible{outline:2px solid var(--acc)}
+
+  /* Pantallas angostas: bloque arriba, teléfono debajo, scroll vertical */
   @media (max-width:900px){
-    .stage{flex-direction:column;gap:16px;padding:14px 16px}
-    .info{max-width:none;width:100%;flex-direction:row;align-items:center;justify-content:space-between;gap:12px}
-    .info .tag,.info h1,.info ul,.info .foot{display:none}
-    .btn{padding:9px 14px;font-size:13px;align-self:auto;box-shadow:none}
-    .btn .full{display:none}
-    .btn .short{display:inline}
+    .stage{flex-direction:column;justify-content:flex-start;gap:28px;padding:20px 16px 32px}
+    .info{max-width:520px;width:100%;gap:18px}
+    h1{font-size:28px}
+    ul.ben li{font-size:14.5px;padding:10px 12px}
+    .btn{width:100%;justify-content:center}
+    .ctas{flex-direction:column;align-items:stretch}
+    .link{text-align:center}
   }
-  @media (max-width:900px) and (min-height:0){ .logo{font-size:19px} .logo-mark{width:30px;height:30px} }
-  @media (prefers-reduced-motion:reduce){.spin{animation:none}.btn{transition:none}}
+  @media (prefers-reduced-motion:reduce){.btn{transition:none}.view.on{animation:none}}
 </style>
 </head>
 <body>
@@ -85,38 +150,39 @@
 
 <main class="stage">
   <section class="info">
-    <div class="logo">
-      <div class="logo-mark" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0b0d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l5-5 4 4 7-8"/><path d="M15 8h5v5"/></svg>
-      </div>
+    <a class="logo" href="index.html" aria-label="EZtock, volver a la demo">
+      <span class="logo-mark" aria-hidden="true">E</span>
       <span>EZ<b>tock</b></span>
-    </div>
+    </a>
 
-    <span class="tag"><i></i>Demo en vivo</span>
+    <span class="tag"><i></i>En producción</span>
 
-    <h1>Vista Móvil<span>App para Dueños de Restaurante</span></h1>
+    <h1>Vista Móvil<span>Stock, costos y compras de tu restaurante en el bolsillo</span></h1>
 
-    <ul>
+    <ul class="ben">
       <li>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4v5c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V7l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
-        Control de mermas en terreno
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
+        Control de mermas y stock en bodega
       </li>
       <li>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b8cff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>
-        Food Cost al instante
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+        Food Cost e Ingeniería de Menú al instante
       </li>
       <li>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.4A8.5 8.5 0 1 1 21 12z"/></svg>
-        Órdenes por WhatsApp en 1 toque
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.4A8.5 8.5 0 1 1 21 12z"/></svg>
+        Órdenes de compra por WhatsApp con fechas reales
       </li>
     </ul>
 
-    <a class="btn" href="https://negroykpza.github.io/eztock-demo/" target="_blank" rel="noopener">
-      <span><span class="full">Abrir versión </span><span class="short">Escritorio</span><span class="full">escritorio</span></span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>
-    </a>
+    <div class="ctas">
+      <a class="btn" href="https://eztock-app.vercel.app" target="_blank" rel="noopener noreferrer">
+        Probar EZtock en vivo
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>
+      </a>
+      <a class="link" href="index.html">Ver demo de escritorio →</a>
+    </div>
 
-    <span class="foot">Datos de demostración · Valores en $ CLP</span>
+    <span class="foot">Vista previa con datos de ejemplo · Valores en $ CLP</span>
   </section>
 
   <div class="phone-slot" id="slot">
@@ -133,9 +199,118 @@
             </span>
           </div>
           <div class="island"></div>
-          <div class="loader" id="loader"><div class="spin"></div>Cargando EZtock…</div>
-          <iframe id="app" src="https://negroykpza.github.io/eztock-demo/" title="EZtock app móvil" loading="eager" allow="clipboard-write"></iframe>
-          <div class="homebar-zone"></div>
+
+          <div class="app" aria-label="Vista previa de la app EZtock">
+            <div class="app-scroll" id="scroll">
+              <div class="ah">
+                <div class="who">
+                  <div class="lm" aria-hidden="true">E</div>
+                  <div><small id="hello">Buenos días</small><strong>Cocina Costanera</strong></div>
+                </div>
+                <div class="bell" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F4F5F7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>
+              </div>
+
+              <!-- INICIO -->
+              <section class="view on" data-view="inicio">
+                <div class="seg"><span>Hoy</span><span>Semana</span><span class="on">Mes</span></div>
+                <div class="c hero" style="margin-top:12px">
+                  <div class="l">Ventas del mes</div>
+                  <div class="v">$18.452.900</div>
+                  <div class="d"><span class="up">▲ 12,4%</span> vs. mes anterior · 2.318 platos</div>
+                  <div class="spark" aria-hidden="true">
+                    <i style="height:42%"></i><i style="height:48%"></i><i style="height:45%"></i><i style="height:58%"></i><i class="pk" style="height:82%"></i><i class="pk" style="height:96%"></i><i class="pk" style="height:74%"></i><i style="height:46%"></i><i style="height:51%"></i><i style="height:49%"></i><i style="height:62%"></i><i class="pk" style="height:88%"></i><i class="pk" style="height:100%"></i><i class="pk" style="height:79%"></i>
+                  </div>
+                </div>
+                <div class="g2">
+                  <div class="c k"><div class="l">Food Cost <span class="chip ok">Meta 30%</span></div><div class="v">29,8%</div><div class="meter"><i style="width:79%"></i></div><div class="s">Costo $5.498.900</div></div>
+                  <div class="c k"><div class="l">Mermas</div><div class="v">$312.400</div><div class="s"><span class="up">▼ 18%</span> vs. octubre</div></div>
+                  <div class="c k"><div class="l">Stock bodega</div><div class="v">$4.870.000</div><div class="s">146 insumos activos</div></div>
+                  <div class="c k"><div class="l">Margen bruto</div><div class="v">70,2%</div><div class="s">$12.954.000</div></div>
+                </div>
+
+                <div class="sec-t">Alertas de bodega <span>3 activas</span></div>
+                <div class="c">
+                  <div class="row"><div class="ic bad"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="t"><b>Reineta fresca</b><small id="vence">Vence en 2 días · 4,2 kg</small></div><div class="r">$39.900<small>en riesgo</small></div></div>
+                  <div class="row"><div class="ic warn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div><div class="t"><b>Palta Hass</b><small>Bajo stock mínimo · 1,8 kg</small></div><div class="r">-3,2 kg<small>para el finde</small></div></div>
+                  <div class="row"><div class="ic warn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div><div class="t"><b>Lenguas de machas</b><small>Merma 9% sobre lo esperado</small></div><div class="r">$21.600<small>esta semana</small></div></div>
+                </div>
+
+                <div class="sec-t">Orden sugerida <span>Lista para enviar</span></div>
+                <div class="c oc">
+                  <div class="top"><div><b>Pescadería San Antonio</b><small class="js-entrega">Entrega: jueves</small></div><span class="chip ok">OC-0482</span></div>
+                  <div class="lines">
+                    <div><span>Reineta fresca · 12 kg</span><span>$114.000</span></div>
+                    <div><span>Lenguas de machas · 4 kg</span><span>$44.000</span></div>
+                    <div><span>Atún fresco · 3 kg</span><span>$40.500</span></div>
+                  </div>
+                  <div class="tot"><span>Total</span><span>$198.500</span></div>
+                  <a class="wa" href="https://eztock-app.vercel.app" target="_blank" rel="noopener noreferrer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.4A8.5 8.5 0 1 1 21 12z"/></svg>Enviar por WhatsApp</a>
+                </div>
+                <a class="live" href="https://eztock-app.vercel.app" target="_blank" rel="noopener noreferrer">Abrir app en producción ↗</a>
+              </section>
+
+              <!-- BODEGA -->
+              <section class="view" data-view="bodega">
+                <div class="c hero">
+                  <div class="l">Valor en bodega</div>
+                  <div class="v">$4.870.000</div>
+                  <div class="d"><span class="up">▼ 18%</span> mermas este mes · $312.400</div>
+                </div>
+                <div class="sec-t">Insumos críticos <span>por riesgo de merma</span></div>
+                <div class="c">
+                  <div class="row"><div class="t"><b>Reineta fresca</b><small>4,2 kg · mín. 6 kg</small><div class="meter"><i style="width:38%;background:var(--bad)"></i></div></div><div class="r"><span class="chip bad">Crítico</span><small>$9.500/kg</small></div></div>
+                  <div class="row"><div class="t"><b>Lomo liso vacuno</b><small>8,5 kg · mín. 7 kg</small><div class="meter"><i style="width:62%;background:var(--warn)"></i></div></div><div class="r"><span class="chip warn">Alto</span><small>$9.800/kg</small></div></div>
+                  <div class="row"><div class="t"><b>Palta Hass</b><small>1,8 kg · mín. 5 kg</small><div class="meter"><i style="width:22%;background:var(--warn)"></i></div></div><div class="r"><span class="chip warn">Medio</span><small>$4.500/kg</small></div></div>
+                  <div class="row"><div class="t"><b>Limón sutil</b><small>9,0 kg · mín. 4 kg</small><div class="meter"><i style="width:88%"></i></div></div><div class="r"><span class="chip ok">Bajo</span><small>$1.800/kg</small></div></div>
+                  <div class="row"><div class="t"><b>Pasta de choclo</b><small>6,5 kg · mín. 4 kg</small><div class="meter"><i style="width:74%"></i></div></div><div class="r"><span class="chip ok">Bajo</span><small>$3.800/kg</small></div></div>
+                </div>
+                <a class="live" href="https://eztock-app.vercel.app" target="_blank" rel="noopener noreferrer">Registrar merma en la app ↗</a>
+              </section>
+
+              <!-- MENU -->
+              <section class="view" data-view="menu">
+                <div class="g2" style="margin-top:0">
+                  <div class="c k"><div class="l">Food Cost</div><div class="v">29,8%</div><div class="s"><span class="up">▼ 1,6 pts</span> en 30 días</div></div>
+                  <div class="c k"><div class="l">Platos Estrella</div><div class="v">3 de 8</div><div class="s">Aportan 54% del margen</div></div>
+                </div>
+                <div class="sec-t">Ingeniería de Menú <span>margen por plato</span></div>
+                <div class="c">
+                  <div class="row"><div class="t"><b>Lomo Saltado</b><small>Precio $13.900 · FC 27%</small></div><div class="r"><span class="chip ok">Estrella</span><small>$10.150</small></div></div>
+                  <div class="row"><div class="t"><b>Ceviche Mixto</b><small>Precio $12.900 · FC 33%</small></div><div class="r"><span class="chip alt">Caballo</span><small>$8.640</small></div></div>
+                  <div class="row"><div class="t"><b>Empanada de Pino</b><small>Precio $3.500 · FC 24%</small></div><div class="r"><span class="chip ok">Estrella</span><small>$2.660</small></div></div>
+                  <div class="row"><div class="t"><b>Tartar de Atún</b><small>Precio $12.900 · FC 26%</small></div><div class="r"><span class="chip warn">Puzzle</span><small>$9.550</small></div></div>
+                  <div class="row"><div class="t"><b>Pastel de Choclo</b><small>Precio $9.900 · FC 38%</small></div><div class="r"><span class="chip bad">Perro</span><small>$6.140</small></div></div>
+                </div>
+                <div class="c" style="margin-top:10px;border-color:rgba(56,189,248,.3)">
+                  <div class="row"><div class="ic ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg></div><div class="t"><b>Sube el Ceviche Mixto a $13.900</b><small>+$412.000 de margen al mes estimado</small></div></div>
+                </div>
+              </section>
+
+              <!-- COMPRAS -->
+              <section class="view" data-view="compras">
+                <div class="c hero">
+                  <div class="l">Compras programadas</div>
+                  <div class="v">$486.900</div>
+                  <div class="d">3 órdenes · 3 proveedores</div>
+                </div>
+                <div class="sec-t">Órdenes de compra <span>por WhatsApp</span></div>
+                <div class="c">
+                  <div class="row"><div class="ic ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.4A8.5 8.5 0 1 1 21 12z"/></svg></div><div class="t"><b>Pescadería San Antonio</b><small class="js-d" data-d="2">Entrega</small></div><div class="r">$198.500<small>Lista</small></div></div>
+                  <div class="row"><div class="ic ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.4A8.5 8.5 0 1 1 21 12z"/></svg></div><div class="t"><b>Carnes del Sur</b><small class="js-d" data-d="3">Entrega</small></div><div class="r">$176.400<small>Lista</small></div></div>
+                  <div class="row"><div class="ic warn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="t"><b>Vega Central · Verduras</b><small class="js-d" data-d="1">Entrega</small></div><div class="r">$112.000<small>Borrador</small></div></div>
+                </div>
+                <a class="wa" href="https://eztock-app.vercel.app" target="_blank" rel="noopener noreferrer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.4A8.5 8.5 0 1 1 21 12z"/></svg>Enviar órdenes por WhatsApp</a>
+                <a class="live" href="https://eztock-app.vercel.app" target="_blank" rel="noopener noreferrer">Abrir app en producción ↗</a>
+              </section>
+            </div>
+
+            <nav class="tabbar" aria-label="Navegación de la vista previa">
+              <button class="on" data-go="inicio"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
+              <button data-go="bodega"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>Bodega</button>
+              <button data-go="menu"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6ZM6 17h12"/></svg>Menú</button>
+              <button data-go="compras"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2M15 18H9M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>Compras</button>
+            </nav>
+          </div>
           <div class="homebar"></div>
         </div>
       </div>
@@ -146,42 +321,52 @@
 <script>
 (function(){
   var PW=414, PH=868;
-  var slot=document.getElementById('slot'), phone=document.getElementById('phone');
-  var glow=document.getElementById('glow');
+  var slot=document.getElementById('slot'), phone=document.getElementById('phone'), glow=document.getElementById('glow');
+  var info=document.querySelector('.info');
   function fit(){
-    var vw=window.innerWidth, vh=window.innerHeight, narrow=vw<=900;
-    var availH, availW;
+    var vw=document.documentElement.clientWidth, vh=window.innerHeight, narrow=vw<=900, s;
     if(narrow){
-      var info=document.querySelector('.info');
-      availH=vh-28-16-info.offsetHeight-8;
-      availW=vw-32;
+      s=Math.min((vw-32)/PW, Math.max(vh-40, 520)/PH, 1);
     }else{
-      availH=vh-64;
-      availW=vw-48-380-Math.min(120,Math.max(40,vw*.07))-24;
+      var availH=vh-48, availW=vw-48-info.offsetWidth-Math.min(120,Math.max(40,vw*.07));
+      s=Math.min(availH/PH, availW/PW, 1.1);
     }
-    var s=Math.min(availH/PH, availW/PW, 1.15);
-    s=Math.max(s,.2);
+    s=Math.max(s,.3);
     phone.style.transform='scale('+s+')';
     slot.style.width=(PW*s)+'px';
     slot.style.height=(PH*s)+'px';
-    var r=slot.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
-    glow.style.setProperty('--cx',cx+'px');
-    var a=glow, st=a.style;
-    st.cssText='';
-    var css='.glow::before{left:'+(cx-380)+'px;top:'+(cy-420)+'px}.glow::after{left:'+(cx-140)+'px;top:'+(cy-60)+'px}';
-    var tag=document.getElementById('glowpos');
-    if(!tag){tag=document.createElement('style');tag.id='glowpos';document.head.appendChild(tag);}
-    tag.textContent=css;
+    var r=slot.getBoundingClientRect();
+    glow.style.setProperty('--cx',(r.left+r.width/2)+'px');
+    glow.style.setProperty('--cy',(r.top+window.scrollY+r.height/2 > vh ? vh*.6 : r.top+r.height/2)+'px');
   }
   function clock(){
     var d=new Date();
     document.getElementById('clock').textContent=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');
   }
+  // Fechas reales de entrega (hoy + N días hábiles aproximados)
+  function fecha(n){
+    var d=new Date(); d.setDate(d.getDate()+n);
+    if(d.getDay()===0) d.setDate(d.getDate()+1);
+    var t=d.toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'short'});
+    return t.charAt(0).toUpperCase()+t.slice(1);
+  }
+  try{
+    document.querySelectorAll('.js-entrega').forEach(function(el){ el.textContent='Entrega: '+fecha(2)+' · 08:00'; });
+    document.querySelectorAll('.js-d').forEach(function(el){ el.textContent='Entrega '+fecha(+el.dataset.d); });
+    var h=new Date().getHours();
+    document.getElementById('hello').textContent=h<12?'Buenos días':h<20?'Buenas tardes':'Buenas noches';
+  }catch(e){}
+  // Navegación de la vista previa
+  var tabs=document.querySelectorAll('.tabbar button'), views=document.querySelectorAll('.view'), sc=document.getElementById('scroll');
+  tabs.forEach(function(b){
+    b.addEventListener('click',function(){
+      tabs.forEach(function(x){x.classList.toggle('on',x===b);});
+      views.forEach(function(v){v.classList.toggle('on',v.dataset.view===b.dataset.go);});
+      sc.scrollTop=0;
+    });
+  });
   window.addEventListener('resize',fit);
   fit(); clock(); setInterval(clock,15000);
-  document.getElementById('app').addEventListener('load',function(){
-    var l=document.getElementById('loader'); if(l) l.style.display='none';
-  });
 })();
 </script>
 </body>
