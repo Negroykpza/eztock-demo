@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>EZtock · Gestión de Stock y Costos</title>
 <style>
-:root{--bg:#0a0b0d;--panel:#111317;--panel2:#181b21;--line:#23262d;--mut:#8b909c;--txt:#e8eaee;--acc:#8b8cff;--ok:#34d399;--warn:#fbbf24;--bad:#f87171;--orange:#fb923c}
+:root{--bg:#0B0D12;--panel:#13161F;--panel2:#1A1E29;--line:#1F2430;--mut:#8b909c;--txt:#e8eaee;--acc:#34D399;--acc-h:#10B981;--on-acc:#052E16;--alt:#38bdf8;--ok:#34d399;--warn:#fbbf24;--bad:#f87171;--orange:#fb923c}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--txt);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
 button,input,select{font-family:inherit;font-size:inherit;color:inherit}
 button{cursor:pointer;background:none;border:0;padding:0}
 svg{display:block}
 .tab{font-variant-numeric:tabular-nums}
-.side{position:fixed;inset:0 auto 0 0;width:240px;background:#0c0d10;border-right:1px solid var(--line);display:none;flex-direction:column;z-index:30;transition:width .2s}
+.side{position:fixed;inset:0 auto 0 0;width:240px;background:#0E1118;border-right:1px solid var(--line);display:none;flex-direction:column;z-index:30;transition:width .2s}
 .side.col{width:68px}
 .brand{display:flex;align-items:center;gap:10px;height:56px;padding:0 16px;border-bottom:1px solid var(--line)}
-.logo{width:32px;height:32px;border-radius:8px;background:var(--acc);color:#0a0b0d;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.logo{width:32px;height:32px;border-radius:8px;background:var(--acc);color:var(--on-acc);font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
 .nav{flex:1;padding:12px;display:flex;flex-direction:column;gap:4px}
 .nav button{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:8px;color:var(--mut);font-weight:500;text-align:left}
 .nav button:hover{background:var(--panel);color:var(--txt)}
@@ -27,12 +27,12 @@ svg{display:block}
 .side-foot p{margin:0 0 8px;padding:0 8px;font-size:11px;color:var(--mut)}
 .side.col .hide-col{display:none}
 .content{min-height:100vh}
-header.top{position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line);background:rgba(10,11,13,.92);backdrop-filter:blur(8px)}
+header.top{position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line);background:rgba(11,13,18,.92);backdrop-filter:blur(8px)}
 .top-in{max-width:1280px;margin:0 auto;height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px}
 .top h1{margin:0;font-size:15px;font-weight:600;line-height:1.2}
 .top .desc{display:none;font-size:12px;color:var(--mut)}
 main{max-width:1280px;margin:0 auto;padding:20px 16px 110px}
-.bottom{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(4,1fr);background:rgba(12,13,16,.96);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.bottom{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(4,1fr);background:rgba(14,17,24,.96);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
 .bottom button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0;font-size:11px;font-weight:500;color:var(--mut)}
 .bottom button.on{color:var(--acc)}
 .stack>*+*{margin-top:16px}
@@ -57,8 +57,8 @@ main{max-width:1280px;margin:0 auto;padding:20px 16px 110px}
 .seg button{padding:6px 12px;border-radius:6px;font-size:12px;font-weight:500;color:var(--mut)}
 .seg button.on{background:var(--panel2);color:var(--txt);box-shadow:0 0 0 1px var(--line)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:8px;padding:10px 16px;font-weight:600;font-size:14px;text-decoration:none}
-.btn.pri{background:var(--acc);color:#0a0b0d;box-shadow:0 8px 24px rgba(139,140,255,.2)}
-.btn.pri:hover{filter:brightness(1.1)}
+.btn.pri{background:var(--acc);color:var(--on-acc);box-shadow:0 8px 24px rgba(52,211,153,.2)}
+.btn.pri:hover{background:var(--acc-h)}
 .btn.out{border:1px solid var(--line);color:var(--txt);font-weight:500}
 .btn.out:hover{border-color:var(--mut)}
 .btn.wa{background:#25d366;color:#06210f}
@@ -70,7 +70,7 @@ main{max-width:1280px;margin:0 auto;padding:20px 16px 110px}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--ok);display:inline-block}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);font-weight:500;padding:8px 6px;text-align:left}
-td{padding:10px 6px;border-top:1px solid rgba(35,38,45,.6)}
+td{padding:10px 6px;border-top:1px solid rgba(31,36,48,.6)}
 .r{text-align:right}
 .scroll{overflow-x:auto;padding:0 16px 16px}
 .bar{height:6px;background:var(--line);border-radius:99px;overflow:hidden;flex:1}
@@ -96,12 +96,12 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 h3.sec{display:flex;align-items:center;gap:8px;margin:0 0 12px;font-size:13px;font-weight:600}
 .prov{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:16px}
 .prov:hover{border-color:var(--mut)}
-.prov.on{border-color:var(--acc);background:rgba(139,140,255,.1)}
+.prov.on{border-color:var(--acc);background:rgba(52,211,153,.1)}
 .prov .it{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);margin-top:4px}
 pre{margin:0;max-height:420px;overflow:auto;white-space:pre-wrap;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:16px;font:12.5px/1.6 ui-monospace,Menlo,Consolas,monospace}
 .chart{width:100%;height:auto;display:block}
 .chart text{font-family:inherit}
-#tip{position:fixed;z-index:99;pointer-events:none;background:#15171c;border:1px solid #2a2e37;border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.5;display:none;max-width:260px}
+#tip{position:fixed;z-index:99;pointer-events:none;background:#13161F;border:1px solid #2A3040;border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.5;display:none;max-width:260px}
 #tip b{display:block;font-size:13px}
 .legend{display:none;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--mut)}
 .legend span{display:flex;align-items:center;gap:4px}
@@ -116,10 +116,21 @@ pre{margin:0;max-height:420px;overflow:auto;white-space:pre-wrap;border:1px soli
 @media(min-width:768px){.side{display:flex}.content{padding-left:240px;transition:padding .2s}.content.col{padding-left:68px}.bottom{display:none}main{padding-bottom:40px}}
 @media(min-width:900px){.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.split{grid-template-columns:2fr 3fr}.cols2{grid-template-columns:1fr 1fr}.trend{grid-template-columns:2fr 1fr}}
 @media(max-width:899px){.g4{grid-template-columns:repeat(2,1fr)}}
+.promo{border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(52,211,153,.14),rgba(52,211,153,.04))}
+.promo-in{max-width:1280px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap}
+.promo-t{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt);min-width:0}
+.promo-t .dot{box-shadow:0 0 8px var(--acc)}
+.promo-a{display:flex;gap:8px;flex-wrap:wrap}
+.promo .btn.sm{padding:7px 12px}
+.btn.out{background:transparent}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+html,body{overflow-x:hidden}
+@media(max-width:639px){.hide-sm{display:none}}
+@media(min-width:640px){.promo-in{padding:8px 24px}}
 </style>
 </head>
 <body>
-<div id="root"><div style="padding:24px;color:#8b909c;font:14px sans-serif">Cargando EZtock…</div></div>
+<div id="root"><div style="padding:24px;color:#8b909c;font:14px sans-serif;background:#0B0D12">Cargando EZtock…</div></div>
 <script>
 /* ===== EZtock · datos y cálculos del escenario demo ===== */
 const HOY = "2026-11-25";
@@ -436,9 +447,9 @@ function leerCSV(texto) {
 /* ===== EZtock · interfaz (JavaScript puro, sin dependencias) ===== */
 (function () {
   const ROOT = document.getElementById("root");
-  const C = { acc: "#8b8cff", ok: "#34d399", warn: "#fbbf24", bad: "#f87171", orange: "#fb923c", mut: "#8b909c", line: "#23262d", dim: "#3a3f4b", txt: "#c9cdd6" };
+  const C = { acc: "#34d399", ok: "#34d399", alt: "#38bdf8", warn: "#fbbf24", bad: "#f87171", orange: "#fb923c", mut: "#8b909c", line: "#1f2430", dim: "#3a3f4b", txt: "#c9cdd6" };
   const RIESGO_COLOR = { "CRÍTICO": C.bad, ALTO: C.orange, MEDIO: C.warn, BAJO: C.ok };
-  const CUAD_COLOR = { Estrella: C.ok, "Caballo de Batalla": C.acc, Rompecabezas: C.warn, Perro: C.bad };
+  const CUAD_COLOR = { Estrella: C.ok, "Caballo de Batalla": C.alt, Rompecabezas: C.warn, Perro: C.bad };
   const CUAD_GUIA = {
     Estrella: ["Alta venta y alto margen", "Mantener y destacar en carta"],
     "Caballo de Batalla": ["Alta venta y bajo margen", "Subir precio o bajar costo"],
@@ -531,7 +542,7 @@ function leerCSV(texto) {
       if (i % 15 === 0) xl += `<text x="${(x + bw / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle" font-size="11" fill="${C.mut}">${d.label}</text>`;
     });
     const pts = serie.map((d, i) => `${(l + i * step + step / 2).toFixed(1)},${y(d.prom7).toFixed(1)}`).join(" ");
-    return `<svg class="chart" viewBox="0 0 ${W} ${H}">${g}${bars}<polyline points="${pts}" fill="none" stroke="${C.ok}" stroke-width="2" stroke-linejoin="round"/>${xl}</svg>`;
+    return `<svg class="chart" viewBox="0 0 ${W} ${H}">${g}${bars}<polyline points="${pts}" fill="none" stroke="${C.alt}" stroke-width="2" stroke-linejoin="round"/>${xl}</svg>`;
   }
 
   function svgSemanal(sem) {
@@ -589,7 +600,7 @@ function leerCSV(texto) {
       puntos.some((c) => { const nx = Math.max(b.x0, Math.min(c.x, b.x1)), ny = Math.max(b.y0, Math.min(c.y, b.y1)); return Math.hypot(nx - c.x, ny - c.y) < R + 3; });
     im.filas.forEach((f) => {
       const tip = `${esc(f.plato)}|${f.cuad}|Unidades: ${fmtN(f.un)}|Margen unitario: ${fmt(f.mu)} (${fmtPct(f.mpct)})|Acción: ${CUAD_GUIA[f.cuad][1]}`;
-      s += `<circle cx="${X(f.un).toFixed(1)}" cy="${Y(f.mu).toFixed(1)}" r="${R}" fill="${CUAD_COLOR[f.cuad]}" fill-opacity="0.92" stroke="#0a0b0d" stroke-width="2" data-tip="${tip}"/>`;
+      s += `<circle cx="${X(f.un).toFixed(1)}" cy="${Y(f.mu).toFixed(1)}" r="${R}" fill="${CUAD_COLOR[f.cuad]}" fill-opacity="0.92" stroke="#0B0D12" stroke-width="2" data-tip="${tip}"/>`;
     });
     im.filas.forEach((f) => {
       const w = f.plato.length * 6.2, cx = X(f.un), cy = Y(f.mu);
@@ -615,7 +626,7 @@ function leerCSV(texto) {
     </div>
     ${!hay ? vacio("chart", "Aún no hay ventas cargadas", "Sube tu reporte POS o carga la demo para generar los indicadores y gráficos.") + "</div>" : `
     <div class="grid g4">${kpi("Total Platos Vendidos", fmtN(an.totalUn), "", "", "unidades en el período", "rec")}${kpi("Platos en Carta", fmtN(an.nPlatos), "", "", "con ventas registradas", "chef")}${kpi("Días Analizados", fmtN(an.dias), "", "", "promedio " + fmtN(an.totalUn / Math.max(an.dias, 1)) + " platos al día", "cal")}${kpi("% Peak Fin de Semana", fmtPct(an.pctPeak), "", "ok", "viernes a domingo", "trend")}</div>
-    <div class="grid trend"><div class="card">${ctitle("Tendencia diaria", "Barras violetas: viernes a domingo. Línea verde: promedio móvil de 7 días.")}<div style="padding:0 8px 12px">${svgTendencia(an.serie)}</div></div>
+    <div class="grid trend"><div class="card">${ctitle("Tendencia diaria", "Barras verdes: viernes a domingo. Línea celeste: promedio móvil de 7 días.")}<div style="padding:0 8px 12px">${svgTendencia(an.serie)}</div></div>
     <div class="card">${ctitle("Estacionalidad semanal", "Promedio de platos por día de la semana")}<div style="padding:0 8px 12px">${svgSemanal(an.semanal)}</div></div></div>
     <div class="card">${ctitle("Resumen por plato", "Ordenado por unidades vendidas")}<div class="scroll"><table style="min-width:480px"><thead><tr><th>Plato</th><th class="r">Unidades</th><th class="r">Por día</th><th style="width:38%;padding-left:16px">Participación</th></tr></thead><tbody>
     ${an.platos.map((p) => `<tr><td style="font-weight:500">${esc(p.plato)}</td><td class="r tab">${fmtN(p.un)}</td><td class="r tab mut">${fmtN(p.un / Math.max(an.dias, 1), 1)}</td><td style="padding-left:16px"><div style="display:flex;gap:8px;align-items:center"><div class="bar"><i style="width:${(p.part / maxPart) * 100}%"></i></div><span class="tab mut" style="width:48px;text-align:right;font-size:12px">${fmtPct(p.part)}</span></div></td></tr>`).join("")}
@@ -722,7 +733,7 @@ function leerCSV(texto) {
     return `<aside class="side ${S.colapsado ? "col" : ""}"><div class="brand"><div class="logo">E</div><div class="hide-col" style="line-height:1.2"><div style="font-weight:600">EZtock</div><div class="mut" style="font-size:10px">Stock y costos gastronómicos</div></div></div>
       <nav class="nav">${NAV.map((n) => `<button class="${S.vista === n.id ? "on" : ""}" title="${n.label}" data-act="ir" data-v="${n.id}">${ico(n.icon, 17)}<span class="hide-col">${n.label}</span></button>`).join("")}</nav>
       <div class="side-foot"><button data-act="col" title="Contraer o expandir menú">${ico(S.colapsado ? "cr" : "cl", 16)}<span class="hide-col">Contraer</span></button></div></aside>
-      <div class="content ${S.colapsado ? "col" : ""}"><header class="top"><div class="top-in"><div style="min-width:0"><h1>${a.titulo}</h1><div class="desc">${a.desc}</div></div>${S.origen === "demo" ? chip(C.acc, "Escenario demo") : S.origen ? chip(C.ok, "Datos propios") : ""}</div></header>
+      <div class="content ${S.colapsado ? "col" : ""}"><div class="promo"><div class="promo-in"><span class="promo-t"><i class="dot"></i><b>Demo estática.</b> <span class="hide-sm">La app real ya está en producción.</span></span><div class="promo-a"><a class="btn sm pri" href="https://eztock-app.vercel.app" target="_blank" rel="noopener noreferrer">Abrir app en producción ↗</a><a class="btn sm out" href="celular.html">Vista Móvil</a></div></div></div><header class="top"><div class="top-in"><div style="min-width:0"><h1>${a.titulo}</h1><div class="desc">${a.desc}</div></div>${S.origen === "demo" ? chip(C.acc, "Escenario demo") : S.origen ? chip(C.ok, "Datos propios") : ""}</div></header>
       <main id="main">${vista(d)}</main></div>
       <nav class="bottom">${NAV.map((n) => `<button class="${S.vista === n.id ? "on" : ""}" data-act="ir" data-v="${n.id}">${ico(n.icon, 20)}${n.corto}</button>`).join("")}</nav><div id="tip"></div>`;
   }
